@@ -1,0 +1,187 @@
+## #############################################################
+### This is the input file for RuNNer (version 0_44 and upwards)
+### #############################################################
+### General remarks: 
+### - commands can be switched off by using the # character at the BEGINNING of the line
+### - the input file can be structured by blank lines and comment lines
+### - the order of the keywords is arbitrary
+### - if keywords are missing, default values will be used and written to runner.out
+### - if mandatory keywords or keyword options are missing, RuNNer will stop with an error message 
+
+element_decoupled_kalman
+########################################################################################################################
+### general keywords
+########################################################################################################################
+nn_type_short 1                                 # 1=Behler-Parrinello, 2=Pair NN
+number_of_elements 2                      # number of elements                                   (nelem)                       MODE1+2+3+4
+elements O H                             # specification of elements                            (element)                     MODE1+2+3+4
+random_seed 2                           # seed for initial random weight parameters and train/test splitting (iseed)         MODE1+2
+property dipoles
+dataset_file   traj.xyz  
+random_number_type 1                      # 1=ran0, 2=ran1, 3=ran2, 4=ran3
+#energy_threshold 100.0d0                  # energythreshold for fitting data in Ha per atom      (fitethres)                   MODE1
+#bond_threshold 0.4d0                      # threshold for the shortest bond in structure         (rmin)                        MODE1+2+3
+
+########################################################################################################################
+### NN structure 
+########################################################################################################################
+use_short_nn                              # use NN for short range interactions                  (lshort) 
+global_hidden_layers_short 2              # number of hidden layers                              (num_layersshort-1)
+global_nodes_short 30 30                  # number of nodes in hidden layers                     (nodes_short)
+global_activation_short t t l             # activation functions                                 (actfunc_short)
+
+##################################################################
+# Training
+##################################################################
+optimizer ekf_ed                 # optimizer [ekf_ed]
+test_fraction 0.1                # fraction of dataset used as test set 
+                                 # [0.1]
+unit_pos   angstrom              # xyz input is given in Angstrom
+epochs 30                        # number of training epochs 
+center_symmetry_functions        # center symmetry functions
+scale_symmetry_functions         # scale symmetry functions
+#scale_min_short_atomic 0.0       # min value for scaling [0.0]
+#scale_max_short_atomic 1.0       # min value for scaling [1.0]
+short_error_threshold 0.75	      # energy threshold of the adaptive Kalman 
+                                 # filter in fraction of the RMSE [1.0]
+short_force_error_threshold 1.0	# threshold of adaptive Kalman filter 
+                                 # on forces in fraction of the RMSE [1.0]
+kalman_lambda_short 0.98000      # Kalman lambda parameter [0.98]
+kalman_nue_short 0.99870         # Kalman nu parameter [0.999]
+#use_old_weights_short            # read old weights  from file
+weights_file weights             # prefix of weights file [weights]
+#use_old_scaling                  # read old scaling parameters
+scaling_file scaling.data        # scaling file [scaling.data]
+short_force_fraction 0.1         # percentage of forces used for fitting 
+                                 # 1.0=100% [0.2]
+weights_min -0.1                  # minimum value for initial random weights 
+                                  # [-sqrt(6/(n_nodes(j)+n_nodes(j-1))]
+weights_max 0.1                   # maximum value for initial random weights 
+                                  # [sqrt(6/(n_nodes(j)+n_nodes(j-1))]
+#precondition_weights             # precondition initial weights
+n_stop_fit -1                    # stop after n_stop_fit epochs without test 
+                                 # RMSE decreasing [-1: never stops]
+#restart                          # restart from previous training
+detect_saturation                # check saturation
+#print_restart                    # print restart info after each epoch
+#weight_decay 0.1                # regularization coefficient (reg*rmse)
+check_expol                      # check extrapolation in prediction mode
+
+cutoff_type 1
+
+
+symfunction_short H 2 O 0.00100 0.0  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.01000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.03000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.06000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.15000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.15000 1.5  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.30000 1.5  4.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.60000 1.5  4.000  ! eta rshift funccutoff
+
+symfunction_short H 2 H 0.00100 0.0  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.01000 0.0  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.03000 0.0  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.06000 0.0  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.15000 0.0  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.15000 1.5  6.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.30000 1.5  6.000  ! eta rshift funccutoff
+
+symfunction_short H 2 H 0.00100 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.00100 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.01000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.01000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.03000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.03000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.06000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.06000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.15000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.15000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.15000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.15000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short H 2 H 0.30000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.30000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short H 2 O 0.60000 1.5 12.000  ! eta rshift funccutoff
+
+symfunction_short H 3 H O 0.010 -1.0 1.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 1.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010 -1.0 2.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 2.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 3.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short H 3 H O 0.010 -1.0 1.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 1.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010 -1.0 2.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 2.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 3.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short H 3 O O 0.001 -1.0 4.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 O O 0.001  1.0 4.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short H 3 H O 0.010 -1.0 4.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.010  1.0 4.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short H 3 H O 0.030 -1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 O O 0.030 -1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.030  1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 O O 0.030  1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short H 3 H O 0.070 -1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.070  1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short H 3 H O 0.200  1.0 1.0   12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+# O:
+symfunction_short O 2 H 0.00100 0.0  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.01000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.03000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.06000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.15000 0.0  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.15000 1.5  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.30000 1.5  4.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.60000 1.5  4.000  ! eta rshift funccutoff
+
+symfunction_short O 2 H 0.00100 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.00100 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.01000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.01000 0.0 12.000  ! eta rshift funccutoff
+
+symfunction_short O 2 H 0.03000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.03000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.06000 1.5 12.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.06000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.06000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.09000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 O 0.15000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.15000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.30000 0.0 12.000  ! eta rshift funccutoff
+symfunction_short O 2 H 0.60000 0.0 12.000  ! eta rshift funccutoff
+
+symfunction_short O 3 H H 0.010 -1.0 1.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010  1.0 1.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010 -1.0 2.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010  1.0 2.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010 -1.0 3.0    6.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short O 3 H H 0.010 -1.0 1.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010  1.0 1.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010 -1.0 2.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010  1.0 2.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010 -1.0 3.0    8.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short O 3 H O 0.001 -1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 O O 0.001 -1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H O 0.001  1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 O O 0.001  1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+symfunction_short O 3 H H 0.010 -1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.010  1.0 4.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.030 -1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H O 0.030 -1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 O O 0.030 -1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.030  1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H O 0.030  1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 O O 0.030  1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.070 -1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+symfunction_short O 3 H H 0.070  1.0 1.0    12.00000     ! central_atom type neighbor_atom1 neighbor_atom2 eta lambda zeta funccutoff
+
+
