@@ -3,6 +3,7 @@
 This repository contains supplementary data supporting the findings of the paper:
 
 "Infrared spectra at coupled cluster accuracy from neural network representations"
+
 Richard Beckmann, Fabien Brieuc, Christoph Schran and Dominik Marx
 
 ## License
